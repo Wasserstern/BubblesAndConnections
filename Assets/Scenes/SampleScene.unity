@@ -159,7 +159,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.49942148, g: 0.8207547, b: 0.7737362, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -247,12 +247,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aeb2a032e6d479e43b9363d79c6c4a9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveAcceleration: 30
-  moveDeceleration: 30
-  moveDecelerationFast: 20
-  maxMoveMagnitude: 5
+  moveAcceleration: 400
+  moveDeceleration: 0
+  moveDecelerationFast: 0
+  maxMoveMagnitude: 63.9
   minMoveMagnitude: 0.5
-  currentBubbleTransform: {fileID: 2054846829}
+  currentBubbleTransform: {fileID: 0}
 --- !u!50 &992024641
 Rigidbody2D:
   serializedVersion: 4
@@ -266,9 +266,9 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 15
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 35.2
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
