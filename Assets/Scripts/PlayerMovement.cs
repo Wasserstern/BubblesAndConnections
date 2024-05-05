@@ -33,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     //Runtime variables
     float xInput;
     bool isHoldingSuperJump;
+    [SerializeField]
     bool isGrounded;
     public Transform currentBubbleTransform;
     Vector2 standardGravity;
@@ -120,6 +121,7 @@ public class PlayerMovement : MonoBehaviour
             if(xInput != 0f)
             {
                 rgbd.AddForce(xInput * transform.right * moveAcceleration, ForceMode2D.Force);
+                
             }
             else{
                 if(rgbd.velocity.magnitude > minMoveMagnitude && currentBubbleTransform != null)
