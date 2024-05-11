@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: fbc91aabb1d0d4e4e8f021e7422ec410
+guid: c6f3e46e759dbd0448444d807a38d513
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,7 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: MoonGuyWalk_0
+      name: MoonGuySitDown_0
       rect:
         serializedVersion: 2
         x: 0
@@ -124,14 +124,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: de9ba666a14b13b41828ed00a65f718f
-      internalID: 1155724948
+      spriteID: b990721ad93f2f749af1a16cf1b7463f
+      internalID: 1484322888
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MoonGuyWalk_1
+      name: MoonGuySitDown_1
       rect:
         serializedVersion: 2
         x: 64
@@ -145,8 +145,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a91db5f426d91c24abbf72d186d6bbe7
-      internalID: 1823878826
+      spriteID: 4791b6078195ecb4cbc64bef09a1f043
+      internalID: 522033696
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: MoonGuySitDown_2
+      rect:
+        serializedVersion: 2
+        x: 128
+        y: 0
+        width: 64
+        height: 64
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f2f5bde6865f9204b9362ecc091a3a09
+      internalID: 838759572
       vertices: []
       indices: 
       edges: []
@@ -162,8 +183,9 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      MoonGuyWalk_0: 1155724948
-      MoonGuyWalk_1: 1823878826
+      MoonGuySitDown_0: 1484322888
+      MoonGuySitDown_1: 522033696
+      MoonGuySitDown_2: 838759572
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

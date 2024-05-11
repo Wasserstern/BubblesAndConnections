@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: fbc91aabb1d0d4e4e8f021e7422ec410
+guid: 64c753399e1f9034f968341a7a04627d
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -110,7 +110,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: MoonGuyWalk_0
+      name: MoonGuySitting_0
       rect:
         serializedVersion: 2
         x: 0
@@ -124,14 +124,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: de9ba666a14b13b41828ed00a65f718f
-      internalID: 1155724948
+      spriteID: c77ff62bad64613498e9c90a4c63ab01
+      internalID: 673468527
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: MoonGuyWalk_1
+      name: MoonGuySitting_1
       rect:
         serializedVersion: 2
         x: 64
@@ -145,8 +145,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a91db5f426d91c24abbf72d186d6bbe7
-      internalID: 1823878826
+      spriteID: 6d687ae5996db5b44a9f3cb96889cc08
+      internalID: 385583285
       vertices: []
       indices: 
       edges: []
@@ -162,8 +162,8 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      MoonGuyWalk_0: 1155724948
-      MoonGuyWalk_1: 1823878826
+      MoonGuySitting_0: 673468527
+      MoonGuySitting_1: 385583285
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: MoonGuyWalk
+  m_Name: MoonGuySitDown
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -21,9 +21,11 @@ AnimationClip:
   - serializedVersion: 2
     curve:
     - time: 0
-      value: {fileID: 1155724948, guid: fbc91aabb1d0d4e4e8f021e7422ec410, type: 3}
+      value: {fileID: 1484322888, guid: c6f3e46e759dbd0448444d807a38d513, type: 3}
     - time: 0.083333336
-      value: {fileID: 1823878826, guid: fbc91aabb1d0d4e4e8f021e7422ec410, type: 3}
+      value: {fileID: 522033696, guid: c6f3e46e759dbd0448444d807a38d513, type: 3}
+    - time: 0.16666667
+      value: {fileID: 838759572, guid: c6f3e46e759dbd0448444d807a38d513, type: 3}
     attribute: m_Sprite
     path: 
     classID: 212
@@ -46,14 +48,15 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     pptrCurveMapping:
-    - {fileID: 1155724948, guid: fbc91aabb1d0d4e4e8f021e7422ec410, type: 3}
-    - {fileID: 1823878826, guid: fbc91aabb1d0d4e4e8f021e7422ec410, type: 3}
+    - {fileID: 1484322888, guid: c6f3e46e759dbd0448444d807a38d513, type: 3}
+    - {fileID: 522033696, guid: c6f3e46e759dbd0448444d807a38d513, type: 3}
+    - {fileID: 838759572, guid: c6f3e46e759dbd0448444d807a38d513, type: 3}
   m_AnimationClipSettings:
     serializedVersion: 2
     m_AdditiveReferencePoseClip: {fileID: 0}
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
-    m_StopTime: 0.16666667
+    m_StopTime: 0.25
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0

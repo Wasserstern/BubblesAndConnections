@@ -10,7 +10,8 @@ public class PlayerMovement : MonoBehaviour
     Rigidbody2D rgbd;
     Collider2D col;
     Animator animator;
-    public GameObject camera;
+    SpriteRenderer spriteRenderer;
+    Transform downDirector;
 
     // General settings
     public float groundCheckDistance;
@@ -27,19 +28,21 @@ public class PlayerMovement : MonoBehaviour
     public float superJumpForceFactor;
     public float minSuperJumpLoadTime;
     public float maxSuperJumpLoadTime;
-    // Camera settings
-    public float cameraMoveTime;
 
     //Runtime variables
     float xInput;
+    float yInput;
+    [SerializeField]
     bool isHoldingSuperJump;
     [SerializeField]
+    bool isPressingSit;
+    [SerializeField]
     bool isGrounded;
+    [SerializeField]
+    bool isSitting;
     public Transform currentBubbleTransform;
     Vector2 standardGravity;
     public float standardDrag;
-    Vector3 nextCameraPosition;
-    Vector2 currentCamVelocity;
     [SerializeField]
     float superJumpLoadTime;
 
@@ -48,22 +51,48 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         rgbd = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         standardGravity = Physics2D.gravity;
-        nextCameraPosition = new Vector3(transform.position.x, transform.position.y, camera.transform.position.z);
-        currentCamVelocity = Vector2.zero;
+        downDirector = transform.GetChild(0);
     }
 
     void Update()
     {
         // Get inputs and check ground
-        xInput = Input.GetAxis("Horizontal");
+        xInput = !isSitting ?  Input.GetAxis("Horizontal") : 0f;
+        yInput = Input.GetAxisRaw("Vertical");
         isHoldingSuperJump = Input.GetKey(KeyCode.Space);
-        Vector2 groundCheckDirection = (new Vector2(transform.position.x - transform.up.x, transform.position.y - transform.up.y) - (Vector2)transform.position).normalized;
-        Debug.DrawRay(transform.position, groundCheckDirection * groundCheckDistance, Color.green, 0.3f);
-        isGrounded = Physics2D.Raycast(transform.position, groundCheckDirection, groundCheckDistance, LayerMask.GetMask("Ground"));
+        isPressingSit = Input.GetKeyDown(KeyCode.LeftControl);
+        Vector2 groundCheckDirection = (downDirector.position - transform.position).normalized;
+        Debug.DrawRay(downDirector.transform.position, groundCheckDirection * groundCheckDistance, Color.green, 0.3f);
+        isGrounded = Physics2D.Raycast(downDirector.transform.position, groundCheckDirection, groundCheckDistance, LayerMask.GetMask("Ground"));
+        
+        Debug.Log(isGrounded);
 
+        // Set animator variables
         animator.SetBool("isGrounded", isGrounded);
+        animator.SetBool("isMoving", xInput > 0f || xInput < 0f);
+        animator.SetBool("isHoldingSuperJump", isHoldingSuperJump);
 
+        if(!isSitting && isPressingSit &&isGrounded && xInput == 0f && rgbd.velocity.magnitude != 0.2f ){
+            // Sitdown
+            isSitting = true;
+            rgbd.velocity = Vector3.zero;
+        }
+        animator.SetBool("isSitting", isSitting);
+
+        if(yInput > 0){
+            if(isSitting){
+                isSitting = false;
+            }
+        }
+
+        if(xInput > 0){
+            spriteRenderer.flipX = false;
+        }
+        else if(xInput < 0){
+            spriteRenderer.flipX = true;
+        }
 
         if(currentBubbleTransform != null){
             // Set rotation towards target bubble 
@@ -97,14 +126,8 @@ public class PlayerMovement : MonoBehaviour
         else{
             superJumpLoadTime = 0f;
         }
+        isGrounded = Physics2D.Raycast(transform.position, groundCheckDirection, groundCheckDistance, LayerMask.GetMask("Ground"));
 
-
-        // Camera stuff
-        nextCameraPosition = new Vector3(transform.position.x, transform.position.y, nextCameraPosition.z);
-        if(camera.transform.position != nextCameraPosition){
-            Vector2 camSmoothDampPosition = Vector2.SmoothDamp(camera.transform.position, nextCameraPosition, ref currentCamVelocity, cameraMoveTime);
-            camera.transform.position = new Vector3(camSmoothDampPosition.x, camSmoothDampPosition.y, nextCameraPosition.z);
-        }
     }
     void FixedUpdate(){
         
