@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-
+using UnityEngine.UIElements;
 public class PlayerMovement : MonoBehaviour
 {
 
@@ -24,27 +24,33 @@ public class PlayerMovement : MonoBehaviour
     public float minMoveMagnitude;
     public float fallAcceleration;
     public float maxFallMagnitude;
-    public float superJumpForce;
-    public float superJumpForceFactor;
-    public float minSuperJumpLoadTime;
-    public float maxSuperJumpLoadTime;
+    public float jumpForce;
+    public float jumpTime;
+    public float fallTime;
+    public float startJumpGravityScale;
+    public float minJumpGravityScale;
+    public float maxJumpGravityScale;
 
     //Runtime variables
     float xInput;
     float yInput;
-    [SerializeField]
-    bool isHoldingSuperJump;
+
     [SerializeField]
     bool isPressingSit;
     [SerializeField]
+    bool isPressingJump;
+    [SerializeField]
+    bool isHoldingJump;
+    [SerializeField]
     bool isGrounded;
+    [SerializeField]
+    bool isJumping;
     [SerializeField]
     bool isSitting;
     public Transform currentBubbleTransform;
     Vector2 standardGravity;
     public float standardDrag;
-    [SerializeField]
-    float superJumpLoadTime;
+
 
     void Start()
     {
@@ -61,8 +67,9 @@ public class PlayerMovement : MonoBehaviour
         // Get inputs and check ground
         xInput = !isSitting ?  Input.GetAxis("Horizontal") : 0f;
         yInput = Input.GetAxisRaw("Vertical");
-        isHoldingSuperJump = Input.GetKey(KeyCode.Space);
         isPressingSit = Input.GetKeyDown(KeyCode.LeftControl);
+        isPressingJump = Input.GetKeyDown(KeyCode.Space);
+        isHoldingJump = Input.GetKey(KeyCode.Space);
         Vector2 groundCheckDirection = (downDirector.position - transform.position).normalized;
         Debug.DrawRay(downDirector.transform.position, groundCheckDirection * groundCheckDistance, Color.green, 0.3f);
         isGrounded = Physics2D.Raycast(downDirector.transform.position, groundCheckDirection, groundCheckDistance, LayerMask.GetMask("Ground"));
@@ -72,7 +79,6 @@ public class PlayerMovement : MonoBehaviour
         // Set animator variables
         animator.SetBool("isGrounded", isGrounded);
         animator.SetBool("isMoving", xInput > 0f || xInput < 0f);
-        animator.SetBool("isHoldingSuperJump", isHoldingSuperJump);
 
         if(!isSitting && isPressingSit &&isGrounded && xInput == 0f && rgbd.velocity.magnitude != 0.2f ){
             // Sitdown
@@ -105,30 +111,44 @@ public class PlayerMovement : MonoBehaviour
             Vector3 lookAtPosition = new Vector3(transform.position.x, transform.position.y +1f);
             transform.up = lookAtPosition - transform.position;
         }
-
         if(isGrounded){
-            if(isHoldingSuperJump)
-            {
-                superJumpLoadTime += Time.deltaTime;
-                if(superJumpLoadTime > maxSuperJumpLoadTime){
-                    rgbd.velocity = Vector2.zero;
-                    superJumpLoadTime = maxSuperJumpLoadTime;
-                }
-            }
-            else
-            {
-                if(superJumpLoadTime > minSuperJumpLoadTime){
-                    rgbd.AddForce(transform.up * superJumpForce * superJumpLoadTime / superJumpForceFactor, ForceMode2D.Impulse);
-                }
-                superJumpLoadTime = 0f;
+            if(isPressingJump && !isJumping){
+                isJumping = true;
+                StartCoroutine(Jump());
             }
         }
-        else{
-            superJumpLoadTime = 0f;
-        }
-        isGrounded = Physics2D.Raycast(transform.position, groundCheckDirection, groundCheckDistance, LayerMask.GetMask("Ground"));
 
     }
+
+    IEnumerator Jump(){
+        float initialGravityScale = rgbd.gravityScale;
+        rgbd.gravityScale = startJumpGravityScale;
+        rgbd.velocity = Vector3.zero;
+        float startTime = Time.time;
+        float elapsedTime = 0f;
+        rgbd.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
+        while(isHoldingJump && Time.time - startTime < jumpTime){
+            // Decrease gravity scale over time
+            float t = EaseFunctions.easeOutBack(elapsedTime / jumpTime);
+            rgbd.gravityScale = Mathf.Lerp(startJumpGravityScale, minJumpGravityScale, t);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        startTime = Time.time;
+        elapsedTime = 0f;
+
+        while(Time.time - startTime < fallTime){
+            float t = EaseFunctions.easeInExpo(elapsedTime / jumpTime);
+            rgbd.gravityScale = Mathf.Lerp(minJumpGravityScale, initialGravityScale, t);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        rgbd.gravityScale = initialGravityScale;
+        isJumping = false;
+    }
+
     void FixedUpdate(){
         
         if(currentBubbleTransform != null){
@@ -137,7 +157,7 @@ public class PlayerMovement : MonoBehaviour
             Physics2D.gravity = bubbleDirection * standardGravity.magnitude;
             rgbd.drag = standardDrag;
 
-            if(!isGrounded && rgbd.velocity.magnitude < maxFallMagnitude)
+            if(!isJumping && !isGrounded && rgbd.velocity.magnitude < maxFallMagnitude)
             {
                 rgbd.AddForce(Physics2D.gravity.normalized * fallAcceleration, ForceMode2D.Force);
             }

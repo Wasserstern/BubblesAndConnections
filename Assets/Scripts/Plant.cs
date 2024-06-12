@@ -12,7 +12,7 @@ public class Plant : MonoBehaviour
     public Color baseColor;
     public float minDistanceToOtherPlants;
     [Header("L-System and Shape Settings")]
-    public GameObject branchPrefab;
+    public  List<GameObject> branchPrefabs;
     public GameObject leafPrefab;
     public int productionIterations;
     public string originalString;
@@ -107,7 +107,7 @@ public class Plant : MonoBehaviour
                 switch(c){
                     case 'F':{
                         // Generate branch, rotate by current rotation, set new branch end and update state
-                        GameObject nextBranch = currentTurtleState.branchEnd == null ? Instantiate(branchPrefab, transform) : Instantiate(branchPrefab, currentTurtleState.branchEnd);
+                        GameObject nextBranch = currentTurtleState.branchEnd == null ? Instantiate(branchPrefabs[Random.Range(0, branchPrefabs.Count)], transform) : Instantiate(branchPrefabs[Random.Range(0, branchPrefabs.Count)], currentTurtleState.branchEnd);
                         nextBranch.transform.Rotate(Vector3.forward, currentTurtleState.angle);
                         nextBranch.transform.localScale = Vector3.one; //* (branchSizeDecrement / currentTurtleState.branchOrder);
                         currentTurtleState = new TurtleState(nextBranch.transform.GetChild(0), currentTurtleState.angle, currentTurtleState.branchOrder);

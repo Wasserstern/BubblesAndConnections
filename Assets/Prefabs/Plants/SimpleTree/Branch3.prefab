@@ -41,7 +41,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8843779695172336143}
   m_Layer: 0
-  m_Name: Branch
+  m_Name: Branch3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -159,7 +159,7 @@ Animator:
   m_GameObject: {fileID: 3341798903510466929}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: b28d46959306efa4eb5c49c0df5d1aa9, type: 2}
+  m_Controller: {fileID: 9100000, guid: 1bc0b157153e1594490cd4116ee960c3, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
