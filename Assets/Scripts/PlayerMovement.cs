@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
 {
 
     //References
+    PlayerState playerState;
     Rigidbody2D rgbd;
     Collider2D col;
     Animator animator;
@@ -30,23 +31,9 @@ public class PlayerMovement : MonoBehaviour
     public float startJumpGravityScale;
     public float minJumpGravityScale;
     public float maxJumpGravityScale;
-
     //Runtime variables
     float xInput;
     float yInput;
-
-    [SerializeField]
-    bool isPressingSit;
-    [SerializeField]
-    bool isPressingJump;
-    [SerializeField]
-    bool isHoldingJump;
-    [SerializeField]
-    bool isGrounded;
-    [SerializeField]
-    bool isJumping;
-    [SerializeField]
-    bool isSitting;
     public Transform currentBubbleTransform;
     Vector2 standardGravity;
     public float standardDrag;
@@ -54,6 +41,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
+        playerState = GetComponent<PlayerState>();
         animator = GetComponent<Animator>();
         rgbd = GetComponent<Rigidbody2D>();
         col = GetComponent<Collider2D>();
@@ -65,31 +53,30 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         // Get inputs and check ground
-        xInput = !isSitting ?  Input.GetAxis("Horizontal") : 0f;
+        xInput = !playerState.isSitting ?  Input.GetAxis("Horizontal") : 0f;
         yInput = Input.GetAxisRaw("Vertical");
-        isPressingSit = Input.GetKeyDown(KeyCode.LeftControl);
-        isPressingJump = Input.GetKeyDown(KeyCode.Space);
-        isHoldingJump = Input.GetKey(KeyCode.Space);
+        playerState.isPressingSit = Input.GetKeyDown(KeyCode.LeftControl);
+        playerState.isPressingJump = Input.GetKeyDown(KeyCode.Space);
+        playerState.isHoldingJump = Input.GetKey(KeyCode.Space);
         Vector2 groundCheckDirection = (downDirector.position - transform.position).normalized;
         Debug.DrawRay(downDirector.transform.position, groundCheckDirection * groundCheckDistance, Color.green, 0.3f);
-        isGrounded = Physics2D.Raycast(downDirector.transform.position, groundCheckDirection, groundCheckDistance, LayerMask.GetMask("Ground"));
-        
-        Debug.Log(isGrounded);
+        playerState.isGrounded = Physics2D.Raycast(downDirector.transform.position, groundCheckDirection, groundCheckDistance, LayerMask.GetMask("Ground"));
 
         // Set animator variables
-        animator.SetBool("isGrounded", isGrounded);
+        animator.SetBool("isGrounded", playerState.isGrounded);
         animator.SetBool("isMoving", xInput > 0f || xInput < 0f);
+        animator.SetBool("isJumping", playerState.isJumping);
 
-        if(!isSitting && isPressingSit &&isGrounded && xInput == 0f && rgbd.velocity.magnitude != 0.2f ){
+        if(!playerState.isSitting && playerState.isPressingSit && playerState.isGrounded && xInput == 0f && rgbd.velocity.magnitude != 0.2f ){
             // Sitdown
-            isSitting = true;
+            playerState.isSitting = true;
             rgbd.velocity = Vector3.zero;
         }
-        animator.SetBool("isSitting", isSitting);
+        animator.SetBool("isSitting", playerState.isSitting);
 
         if(yInput > 0){
-            if(isSitting){
-                isSitting = false;
+            if(playerState.isSitting){
+                playerState.isSitting = false;
             }
         }
 
@@ -111,9 +98,9 @@ public class PlayerMovement : MonoBehaviour
             Vector3 lookAtPosition = new Vector3(transform.position.x, transform.position.y +1f);
             transform.up = lookAtPosition - transform.position;
         }
-        if(isGrounded){
-            if(isPressingJump && !isJumping){
-                isJumping = true;
+        if(playerState.isGrounded){
+            if(playerState.isPressingJump && !playerState.isJumping){
+                playerState.isJumping = true;
                 StartCoroutine(Jump());
             }
         }
@@ -127,7 +114,7 @@ public class PlayerMovement : MonoBehaviour
         float startTime = Time.time;
         float elapsedTime = 0f;
         rgbd.AddForce(transform.up * jumpForce, ForceMode2D.Impulse);
-        while(isHoldingJump && Time.time - startTime < jumpTime){
+        while(playerState.isHoldingJump && Time.time - startTime < jumpTime){
             // Decrease gravity scale over time
             float t = EaseFunctions.easeOutBack(elapsedTime / jumpTime);
             rgbd.gravityScale = Mathf.Lerp(startJumpGravityScale, minJumpGravityScale, t);
@@ -146,7 +133,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
         rgbd.gravityScale = initialGravityScale;
-        isJumping = false;
+        playerState.isJumping = false;
     }
 
     void FixedUpdate(){
@@ -157,7 +144,7 @@ public class PlayerMovement : MonoBehaviour
             Physics2D.gravity = bubbleDirection * standardGravity.magnitude;
             rgbd.drag = standardDrag;
 
-            if(!isJumping && !isGrounded && rgbd.velocity.magnitude < maxFallMagnitude)
+            if(!playerState.isJumping && !playerState.isGrounded && rgbd.velocity.magnitude < maxFallMagnitude)
             {
                 rgbd.AddForce(Physics2D.gravity.normalized * fallAcceleration, ForceMode2D.Force);
             }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-public class Plant : MonoBehaviour
+public class Plant : Item
 {
 
     [Header("General Settings")]
@@ -41,9 +41,9 @@ public class Plant : MonoBehaviour
             this.branchOrder = branchOrder;
         }
     }
-    void Start()
+    protected override void Start()
     {
-        isSprouting = true;
+        base.Start();
         turtleStack = new Stack<TurtleState>();
     }
 
@@ -152,4 +152,15 @@ public class Plant : MonoBehaviour
         }
     }
 
+    public override void Throw(Vector2 throwDirection, float throwForce)
+    {
+        //TODO: When adding particles, do extra particles for throwing here.
+        base.Throw(throwDirection, throwForce);
+        Activate();
+    }
+
+    public override void Activate()
+    {
+        isSprouting = true;   
+    }
 }

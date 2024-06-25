@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 3585773899282073359}
   - component: {fileID: 1468627472599744692}
   - component: {fileID: 1371869748254427669}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: SimpleTreeSeed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
