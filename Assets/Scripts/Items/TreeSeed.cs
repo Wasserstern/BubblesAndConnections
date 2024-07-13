@@ -2,11 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using static Bud;
 
-public class Plant : Item
+/// <summary>
+/// Tree seeds are items that are activated on interaction. They grow L-System branches. These branches have the spawn buds of the selected fruit type.
+/// </summary>
+public class TreeSeed : Item
 {
-
+    [Header("References and prefabs")]
+    public GameObject budPrefab;
     [Header("General Settings")]
+    public FruitType fruitType;
     public float sproutTime;
     public float growTime;
     public Color baseColor;
@@ -22,6 +28,9 @@ public class Plant : Item
     string generationString;
     TurtleState currentTurtleState;
     Stack<TurtleState> turtleStack;
+    List<(GameObject, float)> branches;
+    List<Bud> allBuds;
+
 
 
     // Runtime variables
@@ -41,10 +50,12 @@ public class Plant : Item
             this.branchOrder = branchOrder;
         }
     }
-    protected override void Start()
+    public override void Start()
     {
         base.Start();
+        branches = new List<(GameObject, float)>();
         turtleStack = new Stack<TurtleState>();
+        allBuds = new List<Bud>();
     }
 
     void Update()
@@ -60,14 +71,27 @@ public class Plant : Item
         if(!isGrowing && currentGrowTime >= growTime){
             // Plant is mature
             currentGrowTime += Time.deltaTime; // This is basically the plants age counter from this point on
-
+            
         }
         if(isSprouting){
             currentSproutTime += Time.deltaTime;
             if(currentSproutTime >= sproutTime){
-                isSprouting = false;
                 // Sprout time over. Seed shall grow to plant now.
-                Grow();
+                // Do various checks first. Then grow.
+                bool canGrow = false;
+                if(currentBubble != null){
+                    Vector2 bubbleDirection = (currentBubble.transform.position - transform.position).normalized;
+                    RaycastHit2D bubbleHit = Physics2D.Raycast(transform.position, bubbleDirection, 1f, LayerMask.GetMask("Ground"));
+                    if(bubbleHit.collider != null){
+                        // Close enough to bubble. Move as close as possible.
+                        transform.position = new Vector3(bubbleHit.point.x, bubbleHit.point.y, transform.position.z);
+                        canGrow = true;
+                    }
+                }
+                if(canGrow){
+                    Grow();
+                    isSprouting = false;
+                }
             }
         }
     }
@@ -113,6 +137,11 @@ public class Plant : Item
                         currentTurtleState = new TurtleState(nextBranch.transform.GetChild(0), currentTurtleState.angle, currentTurtleState.branchOrder);
 
                         // TODO: Generate leaves if branchOrder is high enough
+                        if(currentTurtleState.branchOrder > 1){
+                            Bud bud = Instantiate(budPrefab, nextBranch.transform.Find("BranchEnd")).GetComponent<Bud>();
+                            bud.SetType(fruitType);
+                            allBuds.Add(bud);
+                        }
                         break;
                     }
                     case '[':{
@@ -156,11 +185,29 @@ public class Plant : Item
     {
         //TODO: When adding particles, do extra particles for throwing here.
         base.Throw(throwDirection, throwForce);
-        Activate();
+        TryActivate();
     }
 
-    public override void Activate()
+    public override bool TryActivate()
     {
-        isSprouting = true;   
+        if(isInteractable){
+            isSprouting = true;
+            return true;
+        }
+        else{
+            return false;
+        }
     }
+
+    public void Shake(){
+        foreach(Bud bud in allBuds){ // Drop all fruits on buds
+            if(bud.TryHarvest()){
+                // TODO: Add harvest successful effect here
+            }
+            else{
+                // TODO: Add harvest failed effect here
+            }
+        }
+    }
+
 }

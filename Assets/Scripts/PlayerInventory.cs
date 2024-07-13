@@ -14,8 +14,8 @@ public class PlayerInventory : MonoBehaviour
     public float throwForce;
     Vector2 pickupDirection;
     [SerializeField]
-    GameObject targetItem;
-    GameObject carriedItem;
+    Item targetItem;
+    Item carriedItem;
     float throwDirectorXOffset;
     void Start()
     {
@@ -48,15 +48,16 @@ public class PlayerInventory : MonoBehaviour
                     minRange = distance;
                 }
             }
-            targetItem = closestItem;
+            if(closestItem != null){
+                targetItem = closestItem.GetComponent<Item>();
+
+            }
 
             if(targetItem != null && carriedItem == null && Input.GetKeyDown(KeyCode.J)){
                 // Pickup item
-                Debug.Log($"Target item null? {targetItem == null}");
-                Debug.Log($"Carried item null? {carriedItem == null}");
-                carriedItem = targetItem;
-                Debug.Log(carriedItem.GetComponent<Item>());
-                carriedItem.GetComponent<Item>().Pickup(carryPoint);
+                if(targetItem.TryPickup(carryPoint)){
+                    carriedItem = targetItem;
+                }
             }
         }
         else{
@@ -67,7 +68,7 @@ public class PlayerInventory : MonoBehaviour
         {
             // TODO: Implement throwing here
             Vector3 throwDirection = (throwDirector.transform.position - carryPoint.transform.position).normalized;
-            carriedItem.GetComponent<Item>().Throw(throwDirection, throwForce);
+            carriedItem.Throw(throwDirection, throwForce);
             carriedItem = null;
         }
 

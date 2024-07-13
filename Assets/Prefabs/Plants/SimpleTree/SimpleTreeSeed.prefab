@@ -176,6 +176,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 501519418b1272244aa3abfce668ac00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isInteractable: 1
+  budPrefab: {fileID: 5251280049841751215, guid: 327d35a5170848e45a0eed470c5b82dd, type: 3}
+  fruitType: 0
   sproutTime: 1
   growTime: 10
   baseColor: {r: 0, g: 0, b: 0, a: 0}
